@@ -8,40 +8,40 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
-var app = express();
+var noteapp = express();
 var fs = require('fs'); // 파일 로드 사용
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+noteapp.set('views', path.join(__dirname, 'views'));
+noteapp.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//noteapp.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+noteapp.use(logger('dev'));
+noteapp.use(bodyParser.json());
+noteapp.use(bodyParser.urlencoded({ extended: false }));
+noteapp.use(cookieParser());
+noteapp.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+noteapp.use('/', index);
+noteapp.use('/users', users);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+noteapp.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+noteapp.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = req.noteapp.get('env') === 'development' ? err : {};
 
   // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
 
-module.exports = app;
+module.exports = noteapp;
