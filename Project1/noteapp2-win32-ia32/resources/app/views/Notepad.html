@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<!--[if IE 6]><html lang="ko" class="no-js old ie6"><![endif]-->
+<!--[if IE 7]><html lang="ko" class="no-js old ie7"><![endif]-->
+<!--[if IE 8]><html lang="ko" class="no-js old ie8"><![endif]-->
+<!--[if IE 9]><html lang="ko" class="no-js modern ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="ko" class="no-js modern"><!--<![endif]-->
+
+<head>
+<meta charset="utf-8" />
+<title>OSS2017 - Notepad </title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+
+<link rel="stylesheet" href="/stylesheets/style.css" />
+<link rel="stylesheet" href="/stylesheets/tabs.css" />
+<link href="http://api.mobilis.co.kr/webfonts/css/?fontface=NanumGothicWeb" rel="stylesheet" />
+<script src="/javascripts/libs/modernizr.min.js"></script>
+<script src="/javascripts/libs/jquery.min.js"></script>
+<script src="/javascripts/jquery.tabs.js"></script>
+<script src="/javascripts/tab_design.js"></script>
+<script src="../node_modules/sqlite3/sqlite3.js"></script>
+<!--[if lte IE 9]><script src="include/js/libs/CFInstall.min.js"></script>
+<script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})});</script><![endif]-->
+<!--[if IE 6]><script src="include/js/libs/DD_belatedPNG.min.js"></script>
+<script>DD_belatedPNG.fix('.png_bg, img');</script><![endif]-->
+
+<!-- http://nicedit.com/index.php -->
+<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>
+<script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
+
+<!-- Weather From : https://github.com/traumverloren/weather -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link href='https://fonts.googleapis.com/css?family=Quicksand|Sacramento' rel='stylesheet' type='text/css'>
+
+<style>
+
+  .jumbotron {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      font-family: Quicksand;
+      padding: 0px;
+  }
+
+  .jumbotron p {
+      font-size: 20px;
+      line-height: 1;
+  }
+
+  .jumbotron h1 {
+      font-family: Sacramento;
+      font-size: 30px;
+      line-height: 1;
+  }
+
+  .jumbotron img {
+      max-width: 100%;
+      height: auto;
+  }
+
+  /* Landscape phones and portrait tablets */
+  @media (max-width: 767px) {
+    .jumbotron img {
+        max-width: 60%;
+        height: auto;
+    }
+  }
+
+  /* Portrait phones and smaller */
+  @media (max-width: 480px) {
+    .jumbotron img {
+        max-width: 100%;
+        height: auto;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .jumbotron p {
+        font-size: 22px;
+    }
+
+    .jumbotron h1 {
+        font-size: 42px;
+      }
+  }
+
+  .steph {
+      font-family: 'Quicksand';
+      font-size: 16px;
+      align-self: flex-start;
+      margin-left: auto;
+  }
+
+  .steph a {
+      color: #009688;
+  }
+
+  .steph a:hover {
+      text-decoration: none;
+      color: #00796B;
+  }
+</style>
+
+<!-- Clock From : https://github.com/chrstphrknwtn/grid-clock -->
+<style>
+
+.tab_contents #clock {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  font-family: '-apple-system';
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+}
+clockmain {
+  width: 92vw;
+  height: 92vw;
+  max-width: 92vh;
+  max-height: 92vh;
+}
+
+glyph {
+  float: left;
+  display: block;
+  width: 6.25%;
+  height: 6.25%;
+  font-size: 2.6vh;
+  font-weight: 300;
+  line-height: 5.5vh;
+  text-align: center;
+  color: #222;
+  transition: color 400ms ease-in-out;
+}
+@media screen and (min-height: 1200px) and (max-width: 1200px) {
+  glyph {
+    font-size: 1.6vh;
+  }
+}
+
+.on glyph {
+  color: white;
+}
+
+</style>
+
+<!-- from: http://m.mkexdev.net/61 -->
+<script type="text/JavaScript">
+
+      var db;
+      function createDB(){
+        db = window.openDatabase("myDB","1.0", "테스트용DB", 1024*1024);
+      }
+
+      function createTable(){
+        db.transaction(function(tx){
+          tx.executeSql("create table Test(id,name)");
+        });
+      }
+
+      function insertData(){
+        createDB();
+        createTable();
+        db.transaction(function(tx){
+          var da = new Date();
+          var year  = da.getFullYear();
+          var month = da.getMonth() + 1; // 0부터 시작하므로 1더함 더함
+          var day   = da.getDate();
+
+          var pr = year + "-" + month + "-" + day + " " + da.toLocaleTimeString();
+
+          // Fail to bring a memoarea value. I don't know what is problem.
+          // var x = document.getElementByClass("nicEdit-main").value;
+          var x = $("div.nicEdit-main").html();
+
+          tx.executeSql("insert into Test values(?,?)",[pr,x]);
+          selectData();
+          alert("데이터를 저장하였습니다.");
+        });
+      }
+
+      function selectData(){
+        createDB();
+        createTable();
+        document.getElementById('table1').innerHTML = "";
+        db.transaction(function(tx){
+          tx.executeSql("select * from Test",[],
+
+            function(tx,result){
+              for(var i = 0; i < result.rows.length; i++){
+                var row = result.rows.item(i);
+                document.getElementById('table1').innerHTML +=  "<tr><td>" + row['id'] + "</td><td>" + row['name'] + "</td></tr>";
+              }
+
+            });
+
+        });
+      }
+
+      function deleteData(){
+        db.transaction(function(tx){
+          tx.executeSql("DROP TABLE Test");
+        });
+        selectData();
+        alert("삭제가 완료되었습니다.");
+      }
+
+      //I don''t know how to use select (like) about variables.
+      function searchData(){
+        createDB();
+        createTable();
+        var srData = $("#searchCode").val();
+        document.getElementById('table1').innerHTML = "";
+        db.transaction(function(tx){
+          tx.executeSql("select * from Test WHERE name LIKE '%" +srData+ "%'",[],
+
+            function(tx,result){
+              for(var i = 0; i < result.rows.length; i++){
+                var row = result.rows.item(i);
+                document.getElementById('table1').innerHTML +=  "<tr><td>" + row['id'] + "</td><td>" + row['name'] + "</td></tr>";
+              }
+
+            });
+
+        });
+      }
+
+    </script>
+
+</head>
+
+
+<body>
+<div id="page-wrap">
+
+	<h1>OSS2017 - Notepad <span>Tab Menu Notepad</span></h1>
+	<h2 class="blind"><a href="https://github.com/Libria/OSD1">Libria's github</a></h2>
+	<div id="tab_design">
+		<a class="blind" href="#contents">탭 메뉴 건너뛰기</a>
+		<nav class="tab_menu clearfix">
+			<ul>
+				<li>
+					<a href="#clock">
+						<img src="/images/clock-icon.png" alt="" />시계
+					</a>
+				</li>
+				<li>
+					<a href="#weather">
+						<img src="/images/weather-icon.png" alt="" />날씨
+					</a>
+				</li>
+				<li>
+					<a href="#calender">
+						<img src="/images/calendar-icon.png" alt="" />캘린더
+					</a>
+				</li>
+				<li>
+					<a href="#Note">
+						<img src="/images/Note-icon.png" alt="" />메모
+					</a>
+				</li>
+				<li>
+					<a href="#list">
+						<img src="/images/NoteList-icon.png" alt="" />목록
+					</a>
+				</li>
+			</ul>
+		</nav><!-- e: .tab_menu -->
+		<div class="tab_contents">
+			<ul>
+				<li id="clock">
+          <!-- Clock From : https://github.com/chrstphrknwtn/grid-clock -->
+
+					<clockmain>
+
+					  <word class="one prefix">
+					    <glyph>o</glyph>
+					    <glyph>n</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="two prefix">
+					    <glyph>t</glyph>
+					    <glyph>w</glyph>
+					    <glyph>o</glyph>
+					  </word>
+
+					  <word class="three prefix">
+					    <glyph>t</glyph>
+					    <glyph>h</glyph>
+					    <glyph>r</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="four prefix">
+					    <glyph>f</glyph>
+					    <glyph>o</glyph>
+					    <glyph>u</glyph>
+					    <glyph>r</glyph>
+					  </word>
+
+					  <glyph>s</glyph>
+					  <glyph>a</glyph>
+					  <glyph>t</glyph>
+
+					  <word class="five prefix">
+					    <glyph>f</glyph>
+					    <glyph>i</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="six prefix">
+					    <glyph>s</glyph>
+					    <glyph>i</glyph>
+					    <glyph>x</glyph>
+					  </word>
+
+					  <word class="seven prefix">
+					    <glyph>s</glyph>
+					    <glyph>e</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <glyph>b</glyph>
+					  <glyph>e</glyph>
+
+					  <word class="eight prefix">
+					    <glyph>e</glyph>
+					    <glyph>i</glyph>
+					    <glyph>g</glyph>
+					    <glyph>h</glyph>
+					    <glyph>t</glyph>
+					  </word>
+
+					  <word class="nine prefix">
+					    <glyph>n</glyph>
+					    <glyph>i</glyph>
+					    <glyph>n</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="ten prefix">
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <glyph>s</glyph>
+					  <glyph>o</glyph>
+					  <glyph>o</glyph>
+					  <glyph>n</glyph>
+
+					  <word class="eleven prefix">
+					    <glyph>e</glyph>
+					    <glyph>l</glyph>
+					    <glyph>e</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <word class="twelve prefix">
+					    <glyph>t</glyph>
+					    <glyph>w</glyph>
+					    <glyph>e</glyph>
+					    <glyph>l</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="half">
+					    <glyph>h</glyph>
+					    <glyph>a</glyph>
+					    <glyph>l</glyph>
+					    <glyph>f</glyph>
+					  </word>
+
+					  <word class="quarter">
+					    <glyph>q</glyph>
+					    <glyph>u</glyph>
+					    <glyph>a</glyph>
+					    <glyph>r</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>r</glyph>
+					  </word>
+
+					  <word class="minutes">
+					    <word class="minute">
+					      <glyph>m</glyph>
+					      <glyph>i</glyph>
+					      <glyph>n</glyph>
+					      <glyph>u</glyph>
+					      <glyph>t</glyph>
+					      <glyph>e</glyph>
+					    </word>
+					    <glyph>s</glyph>
+					  </word>
+
+					  <glyph>t</glyph>
+					  <glyph>o</glyph>
+
+					  <word class="twenty">
+					    <glyph>t</glyph>
+					    <glyph>w</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					    <glyph>t</glyph>
+					    <glyph>y</glyph>
+					  </word>
+
+					  <words class="thirteen">
+					    <glyph>t</glyph>
+					    <glyph>h</glyph>
+					    <glyph>i</glyph>
+					    <glyph>r</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </words>
+
+					  <glyph>a</glyph>
+					  <glyph>t</glyph>
+
+					  <words class="fourteen">
+					    <glyph>f</glyph>
+					    <glyph>o</glyph>
+					    <glyph>u</glyph>
+					    <glyph>r</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </words>
+
+					  <words class="fifteen">
+					    <glyph>f</glyph>
+					    <glyph>i</glyph>
+					    <glyph>f</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </words>
+
+					  <glyph>s</glyph>
+
+					  <words class="past">
+					    <glyph>p</glyph>
+					    <glyph>a</glyph>
+					    <glyph>s</glyph>
+					    <glyph>t</glyph>
+					  </words>
+
+					  <word class="to">
+					    <glyph>t</glyph>
+					    <glyph>o</glyph>
+					  </word>
+
+					  <word class="sixteen">
+					    <glyph>s</glyph>
+					    <glyph>i</glyph>
+					    <glyph>x</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <glyph>c</glyph>
+					  <glyph>k</glyph>
+					  <glyph>n</glyph>
+
+					  <word class="seventeen">
+					    <glyph>s</glyph>
+					    <glyph>e</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <word class="twenty-minutes">
+					    <glyph>t</glyph>
+					    <glyph>w</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					    <glyph>t</glyph>
+					    <glyph>y</glyph>
+					  </word>
+
+					  <glyph>a</glyph>
+
+					  <word class="eighteen">
+					    <glyph>e</glyph>
+					    <glyph>i</glyph>
+					    <glyph>g</glyph>
+					    <glyph>h</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <word class="nineteen">
+					    <glyph>n</glyph>
+					    <glyph>i</glyph>
+					    <glyph>n</glyph>
+					    <glyph>e</glyph>
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <word class="thirty-minutes">
+					    <glyph>t</glyph>
+					    <glyph>h</glyph>
+					    <glyph>i</glyph>
+					    <glyph>r</glyph>
+					    <glyph>t</glyph>
+					    <glyph>y</glyph>
+					  </word>
+
+					  <word class="forty-minutes">
+					    <glyph>f</glyph>
+					    <glyph>o</glyph>
+					    <glyph>r</glyph>
+					    <glyph>t</glyph>
+					    <glyph>y</glyph>
+					  </word>
+
+					  <word class="fifty-minutes">
+					    <glyph>f</glyph>
+					    <glyph>i</glyph>
+					    <glyph>f</glyph>
+					    <glyph>t</glyph>
+					    <glyph>y</glyph>
+					  </word>
+
+					  <word class="oclock">
+					    <glyph>o</glyph>
+					    <glyph>c</glyph>
+					    <glyph>l</glyph>
+					    <glyph>o</glyph>
+					    <glyph>c</glyph>
+					    <glyph>k</glyph>
+					  </word>
+
+					  <word class="one suffix">
+					    <glyph>o</glyph>
+					    <glyph>n</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="two suffix">
+					    <glyph>t</glyph>
+					    <glyph>w</glyph>
+					    <glyph>o</glyph>
+					  </word>
+
+					  <glyph>m</glyph>
+					  <glyph>o</glyph>
+					  <glyph>o</glyph>
+					  <glyph>n</glyph>
+
+					  <word class="three suffix">
+					    <glyph>t</glyph>
+					    <glyph>h</glyph>
+					    <glyph>r</glyph>
+					    <glyph>e</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="four suffix">
+					    <glyph>f</glyph>
+					    <glyph>o</glyph>
+					    <glyph>u</glyph>
+					    <glyph>r</glyph>
+					  </word>
+
+					  <word class="five suffix">
+					    <glyph>f</glyph>
+					    <glyph>i</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <word class="six suffix">
+					    <glyph>s</glyph>
+					    <glyph>i</glyph>
+					    <glyph>x</glyph>
+					  </word>
+
+					  <word class="seven suffix">
+					    <glyph>s</glyph>
+					    <glyph>e</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <word class="eight suffix">
+					    <glyph>e</glyph>
+					    <glyph>i</glyph>
+					    <glyph>g</glyph>
+					    <glyph>h</glyph>
+					    <glyph>t</glyph>
+					  </word>
+
+					  <word class="nine suffix">
+					    <glyph>n</glyph>
+					    <glyph>i</glyph>
+					    <glyph>n</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <glyph>i</glyph>
+					  <glyph>o</glyph>
+
+					  <word class="ten suffix">
+					    <glyph>t</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <word class="eleven suffix">
+					    <glyph>e</glyph>
+					    <glyph>l</glyph>
+					    <glyph>e</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					    <glyph>n</glyph>
+					  </word>
+
+					  <word class="twelve suffix">
+					    <glyph>t</glyph>
+					    <glyph>w</glyph>
+					    <glyph>e</glyph>
+					    <glyph>l</glyph>
+					    <glyph>v</glyph>
+					    <glyph>e</glyph>
+					  </word>
+
+					  <glyph>s</glyph>
+
+					</clockmain>
+
+					<script>
+
+						var allNodeList = document.querySelectorAll('*');
+						var allElements = Array.prototype.slice.call(allNodeList, 0);
+
+						var prefixElements = document.querySelectorAll('.prefix');
+						var suffixElements = document.querySelectorAll('.suffix');
+
+						function el(selector) {
+						  return document.querySelector(selector);
+						}
+
+						function setClockElOn(selector) {
+						  el(selector).classList.add('on');
+						}
+
+						function setPrefixElOn(number) {
+						  prefixElements[number-1].classList.add('on');
+						}
+
+						function setSuffixElOn(number) {
+						  if(number == 13) number = 1;
+						  suffixElements[number-1].classList.add('on');
+						}
+
+						function setMinutes(minutes) {
+						  minutes = minutes.toString().split('');
+
+						  switch(parseInt(minutes[0], 10)) {
+						    case 2:
+						      setClockElOn('.twenty-minutes');
+						      break;
+						    case 3:
+						      setClockElOn('.thirty-minutes');
+						      break;
+						    case 4:
+						      setClockElOn('.forty-minutes');
+						      break;
+						    case 5:
+						      setClockElOn('.fifty-minutes');
+						      break;
+						  }
+
+						  if(minutes % 10 != 0) {
+						    setSuffixElOn(parseInt(minutes[1], 10))
+						  }
+						}
+
+						function clearClock() {
+						  allElements.forEach(function(element) {
+						    element.classList.remove('on');
+						  });
+						}
+
+						/** Main / Update Clock
+						----------------------------------------------------------------------------- */
+						function updateClock() {
+						  var date = new Date();
+						  var hour = date.getHours();
+						  var minutes = date.getMinutes();
+
+						  // Convert 24 hour time to 12 hour
+						  if (hour >= 13) hour = hour-12;
+						  if (hour == 0) hour = 12;
+
+						  // 'Turn off' all clock elements
+						  clearClock();
+
+						  // One minute past [hour]
+						  if(minutes == 1) {
+						    setClockElOn('.one');
+						    setClockElOn('.minute');
+						    setClockElOn('.past');
+						    setSuffixElOn(hour);
+						    return;
+						  }
+
+						  // [minutes] past [hour]
+						  if(minutes <= 12 && minutes >= 2) {
+						    setPrefixElOn(minutes);
+						    setClockElOn('.minutes');
+						    setClockElOn('.past');
+						    setSuffixElOn(hour);
+						    return;
+						  }
+
+						  switch(minutes) {
+						    // [hour] o'clock
+						    case 0:
+						      setPrefixElOn(hour);
+						      setClockElOn('.oclock');
+						      return;
+						    // [hour] [minutes]
+						    case 13:
+						      setPrefixElOn(hour);
+						      setClockElOn('.thirteen');
+						      return;
+						    case 14:
+						      setPrefixElOn(hour);
+						      setClockElOn('.fourteen');
+						      return;
+						    case 16:
+						      setPrefixElOn(hour);
+						      setClockElOn('.sixteen');
+						      return;
+						    case 17:
+						      setPrefixElOn(hour);
+						      setClockElOn('.seventeen');
+						      return;
+						    case 18:
+						      setPrefixElOn(hour);
+						      setClockElOn('.eighteen');
+						      return;
+						    case 19:
+						      setPrefixElOn(hour);
+						      setClockElOn('.nineteen');
+						      return;
+						    // quarter past [hour]
+						    case 15:
+						      setClockElOn('.quarter');
+						      setClockElOn('.past');
+						      setSuffixElOn(hour);
+						      return;
+						    // twenty past [hour]
+						    case 20:
+						      setClockElOn('.twenty');
+						      setClockElOn('.past');
+						      setSuffixElOn(hour);
+						      return;
+						    // half past [hour]
+						    case 30:
+						      setClockElOn('.half');
+						      setClockElOn('.past');
+						      setSuffixElOn(hour);
+						      return;
+						    // half to [next hour]
+						    case 40:
+						      setClockElOn('.twenty');
+						      setClockElOn('.to');
+						      setSuffixElOn(hour+1);
+						      return;
+						    // quarter to [next hour]
+						    case 45:
+						      setClockElOn('.quarter');
+						      setClockElOn('.to');
+						      setSuffixElOn(hour+1);
+						      return;
+						    // ten to [next hour]
+						    case 50:
+						      setClockElOn('.ten');
+						      setClockElOn('.to');
+						      setSuffixElOn(hour+1);
+						      return;
+						    // five to [next hour]
+						    case 55:
+						      setClockElOn('.five');
+						      setClockElOn('.to');
+						      setSuffixElOn(hour+1);
+						      return;
+						  }
+
+						  // [hour] [minutes]
+						  setPrefixElOn(hour);
+						  setMinutes(minutes);
+						}
+
+						/** Tick / init
+						----------------------------------------------------------------------------- */
+						setInterval(updateClock, 1000);
+						updateClock();
+
+						</script>
+
+				</li>
+				<li id="weather">
+          <!-- Weather From : https://github.com/traumverloren/weather -->
+          <div class="background container-fluid">
+            <p class="pull-right steph">by <a href="https://traumverloren.github.io">stephanie</a></p>
+            <div class="row">
+              <div class="jumbotron text-center">
+                <div class="data">
+                  <div class="waiting">
+                    <img src="./images/rainbow.png"></img>
+                    <h1>Retrieving your weather info...</h1>
+                    <i class="fa fa-2x fa-spinner fa-spin fa-pulse"></i>
+                  </div>
+                  <div class="weather-data">
+                    <div id="weather-icon"></div>
+                    <h1 id="summary"></h1>
+                    <p><span id="currentTemp"></span> °<span class="units">F</span></p>
+                  </div>
+                </div>
+                <button class="btn btn-large btn-info convertUnits">°C</button>
+              </div>
+            </div>
+          </div>
+
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+          <script>
+            $(document).ready(function() {
+              $(".weather-data").hide(0);
+              $(".convertUnits").hide(0);
+
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(success, error);
+
+                function success(position) {
+                  var key = "6d0af58f1221cec34ad4126a975288ab";
+                  var lat = position.coords.latitude;
+                  var lon = position.coords.longitude;
+                  var data;
+
+                  $.getJSON( "https://api.forecast.io/forecast/" + key + "/" + lat + "," + lon + "?units=us" + "&callback=?", function(data) {
+                    $(".waiting").hide();
+                    $(".weather-data").show();
+
+                    var convertToCelsius = function (temp) {
+                      return (temp - 32) * (5/9)
+                    }
+
+                    var icon = data.currently.icon;
+                    var summary = data.currently.summary;
+                    var currentFahrenheitTemp = Math.round(data.currently.temperature);
+                    var currentCelsiusTemp = Math.round(convertToCelsius(currentFahrenheitTemp));
+
+                    $("#summary").html(summary);
+                    $("#currentTemp").html(currentFahrenheitTemp);
+                    $(".convertUnits").show(0);
+                    $("#weather-icon").html('<img src="' + './images/' + assignImage(icon) + '" />');
+
+                    $("button").click(function() {
+                      if ($(".units").html() === "C") {
+                        $("#currentTemp").html(currentFahrenheitTemp);
+                        $(".units").html("F");
+                        $(".convertUnits").html("°C");
+                      } else if ($(".units").html() === "F") {
+                        $("#currentTemp").html(currentCelsiusTemp);
+                        $(".units").html("C");
+                        $(".convertUnits").html("°F");
+                      }
+                    });
+
+                    // Put in icons to show up based on icon field response.
+                    function assignImage(icon) {
+                      switch (icon) {
+                        case "clear-day":
+                          return "sun.png";
+                          break;
+                        case "clear-night":
+                          return "moon.png";
+                          break;
+                        case "rain":
+                          return "rain.png";
+                          break;
+                        case "snow":
+                          return "snowing.png";
+                          break;
+                        case "sleet":
+                          return "snowing.png";
+                          break;
+                        case "wind":
+                          return "wind.png";
+                          break;
+                        case "fog":
+                          return "cloudy.png";
+                          break;
+                        case "cloudy":
+                          return "cloudy.png";
+                          break;
+                        case "partly-cloudy-day":
+                          return "partly_cloudy.png";
+                          break;
+                        case "partly-cloudy-night":
+                          return "nightclouds.png";
+                          break;
+                        case "hail":
+                          return "super_storm.png";
+                          break;
+                        case "tornado":
+                          return "tornado.png";
+                          break;
+                        case "thunderstorm":
+                          return "thunderstorm.png";
+                          break;
+                        default:
+                          return "rainbow.png";
+                      }
+                    }
+                  });
+                };
+
+                function error() {
+                  $(".data").html('<img src="./images/doh.png" /><br/><p>Sorry, unable to retrieve your location.</p>');
+                };
+
+              } else {
+                $(".data").html("Sorry, geolocation is not supported by your browser.");
+              }
+
+              // This gets all icons upon page load.
+              image0 = new Image();
+              image1 = new Image();
+              image2 = new Image();
+              image3 = new Image();
+              image4 = new Image();
+              image5 = new Image();
+              image6 = new Image();
+              image7 = new Image();
+              image8 = new Image();
+              image9 = new Image();
+              image10 = new Image();
+              image11 = new Image();
+              image0.src="images/sun.png";
+              image1.src="images/cloudy.png";
+              image2.src="images/windy.png";
+              image3.src="images/moon.png";
+              image4.src="images/nightclouds.png";
+              image5.src="images/rain.png";
+              image6.src="images/rainbow.png";
+              image7.src="images/snowing.png";
+              image8.src="images/sun.png";
+              image9.src="images/storm.png";
+              image10.src="images/super_storm.png";
+              image11.src="images/tornado.png";
+            });
+          </script>
+				</li>
+				<li id="calender">
+					<p> 대한민국 공휴일 캘린더 </p>
+
+					<iframe src="https://calendar.google.com/calendar/embed?src=ko.south_korea%23holiday%40group.v.calendar.google.com&ctz=Asia/Seoul" style="border: 0" width="700" height="600" frameborder="0" scrolling="no"></iframe>
+				</li>
+				<li id="Note">
+          <div id="memo">
+            <script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script> <script type="text/javascript">
+          //<![CDATA[
+                  bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+            //]]>
+            </script>
+            <h4>
+              Note
+            </h4>
+            <textarea id="memoarea" style="width: 100%;">Some Initial Content was in this textarea</textarea>
+            <br />
+          </div>
+          <button onclick='insertData()'>저장</button>
+          <p id="demo"></p>
+
+      </li>
+					<li id="list">
+						<h3>목록</h3>
+            <br>
+            <table id="table1"></table>
+            <br>
+            <button onclick="selectData()">조회</button>
+            <button onclick="deleteData()">전체 삭제</button>
+            <br>
+            <br>
+            검색어 : <input type="text" id="searchCode">
+            <button onclick="searchData()">검색</button>
+					</li>
+			</ul>
+		</div><!-- e: .tab_contents -->
+	</div><!-- e: #tab_design -->
+
+</div><!-- e: #page-wrap -->
+</body>
+</html>
